@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Staff</h1>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Name</th><th>Role</th><th>Phone</th><th>Assigned groups</th><th></th></tr></thead>
+    <tbody>
+      {% for s in staffs %}
+      <tr>
+        <td>{{ s.user.get_full_name|default:s.user.username }}</td>
+        <td>{{ s.get_role_display }}</td>
+        <td>{{ s.phone|default:'—' }}</td>
+        <td>{{ s.assigned_groups.count }}</td>
+        <td><a href="{% url 'staff_edit' s.pk %}">Edit</a> | <a href="{% url 'staff_detail' s.pk %}">View</a></td>
+      </tr>
+      {% empty %}
+      <tr class="empty-row"><td colspan="5">No staff found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p style="margin-top:12px;"><a href="{% url 'staff_new' %}" class="btn btn-primary">Add staff</a></p>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Record saving transaction</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Record</button>
+</form>
+<script>
+  (function(){
+    const map = {{ member_group_json|default:"{}"|safe }};
+    const memberSelect = document.querySelector('select[name="member"]');
+    const groupSelect = document.querySelector('select[name="group"]');
+    if(!memberSelect || !groupSelect) return;
+
+    function syncGroup(){
+      const memberId = memberSelect.value;
+      const gid = map[memberId] || "";
+      // set the group select to the member's group if present
+      try { groupSelect.value = gid; } catch(e) {}
+    }
+
+    memberSelect.addEventListener('change', syncGroup);
+    // initialize on load
+    syncGroup();
+  })();
+</script>
+{% endblock %}

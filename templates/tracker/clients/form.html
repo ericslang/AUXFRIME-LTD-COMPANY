@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if client %}Edit member{% else %}New member{% endif %} — Ledger{% endblock %}
+{% block content %}
+  <button class="back-link" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+  <div class="page-head">
+    <div>
+      <h2>{% if client %}Edit member{% else %}New member{% endif %}</h2>
+      <p>Member records link to a group and carry every loan they take.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.name.id_for_label }}">Full name</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+      </div>
+      {% if group %}
+      <div class="field">
+        <label>Group</label>
+        <div>{{ group.name }}</div>
+        <input type="hidden" name="group" value="{{ group.pk }}">
+      </div>
+      {% else %}
+      <div class="field">
+        <label for="{{ form.group.id_for_label }}">Group</label>
+        {{ form.group }}
+      </div>
+      {% endif %}
+      <div class="form-row">
+        <div class="field">
+          <label for="{{ form.phone.id_for_label }}">Phone number</label>
+          {{ form.phone }}
+        </div>
+        <div class="field">
+          <label for="{{ form.id_number.id_for_label }}">National ID number</label>
+          {{ form.id_number }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="{{ form.join_date.id_for_label }}">Date joined</label>
+          {{ form.join_date }}
+        </div>
+        <div class="field">
+          <label for="{{ form.status.id_for_label }}">Status</label>
+          {{ form.status }}
+        </div>
+      </div>
+      <div class="form-actions">
+        <a class="btn btn-ghost" href="{% url 'client_list' %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">Save member</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

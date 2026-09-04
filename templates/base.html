@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Ledger{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">
+          AUXFRIME LTD COMPANY
+        </div>
+      </div>
+      <nav>
+        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+          <i class="ti ti-layout-dashboard"></i> Dashboard
+        </a>
+        <a class="nav-link {% if 'group' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'group_list' %}">
+          <i class="ti ti-building-community"></i> Groups
+        </a>
+        <a class="nav-link {% if 'client' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'client_list' %}">
+          <i class="ti ti-users"></i> Members
+        </a>
+        <a class="nav-link {% if 'loan' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'loan_list' %}">
+          <i class="ti ti-wallet"></i> Loans
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'staff_list' or request.resolver_match.url_name == 'staff_new' or request.resolver_match.url_name == 'staff_edit' %}active{% endif %}" href="{% url 'staff_list' %}">
+          <i class="ti ti-user-check"></i> Staff & Agents
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'audit_list' %}active{% endif %}" href="{% url 'audit_list' %}">
+          <i class="ti ti-list-check"></i> Audit Log
+        </a>
+        <a class="nav-link {% if request.resolver_match.url_name == 'saving_transaction' %}active{% endif %}" href="{% url 'saving_transaction' %}">
+          <i class="ti ti-coins"></i> Savings
+        </a>
+        <div class="nav-parent" id="reports-menu">
+          <div class="nav-link reports-toggle">
+            <i class="ti ti-report-money"></i> Reports
+          </div>
+          <div class="nav-sub" id="reports-sub">
+            <a class="nav-link sub {% if request.resolver_match.url_name == 'financial_report_view' or request.resolver_match.url_name == 'financial_report' %}active{% endif %}" href="{% url 'financial_report_view' %}">Financial</a>
+            <a class="nav-link sub {% if request.resolver_match.url_name == 'loan_report_view' or request.resolver_match.url_name == 'loan_report' %}active{% endif %}" href="{% url 'loan_report_view' %}">Loans</a>
+          </div>
+        </div>
+        <a class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'settings' %}">
+          <i class="ti ti-settings"></i> Settings
+        </a>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="who">Signed in as</div>
+        <div class="row">
+          <span>{{ request.user.get_username }}</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit"><i class="ti ti-logout-2"></i> Sign out</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+    <main class="main">
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</main>
+  <style>
+    /* hide report submenu by default */
+    #reports-sub { display: none; margin-left: 0.5rem; }
+    .nav-parent.open #reports-sub { display: block; }
+    .nav-link.sub { display: block; padding-left: 1.4rem; }
+  </style>
+  <script>
+    (function(){
+      const parent = document.getElementById('reports-menu');
+      const sub = document.getElementById('reports-sub');
+      const toggle = parent && parent.querySelector('.reports-toggle');
+      if(!parent || !toggle) return;
+      // Auto-open if on a report page
+      const name = "{{ request.resolver_match.url_name|default:'' }}";
+      if(name === 'financial_report_view' || name === 'loan_report_view' || name === 'financial_report' || name === 'loan_report'){
+        parent.classList.add('open');
+      }
+      toggle.addEventListener('click', function(){
+        parent.classList.toggle('open');
+      });
+    })();
+  </script>
+</body>
+</html>

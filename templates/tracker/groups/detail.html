@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ group.name }} — Members{% endblock %}
+{% block content %}
+  <button class="back-link" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+  <div class="page-head">
+    <div>
+      <h2>{{ group.name }}</h2>
+      <p>{{ group.location }} — {{ group.meeting_day }}</p>
+      {% if group.head %}
+        <p><strong>Group head:</strong> {{ group.head.name }} {% if group.head.phone %}— {{ group.head.phone }}{% endif %} {% if group.head.id_number %}<br>National ID: {{ group.head.id_number }}{% endif %}</p>
+      {% endif %}
+    </div>
+    <div style="margin-left: auto">
+      <a href="{% url 'group_add_member' group.pk %}" class="btn">Add member</a>
+      <a href="{% url 'group_edit' group.pk %}" class="btn">Edit group</a>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Phone</th><th>National ID</th><th>Joined</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td>{{ client.name }}</td>
+          <td>{{ client.phone|default:"—" }}</td>
+          <td>{{ client.id_number|default:"—" }}</td>
+          <td>{{ client.join_date|date:"d M Y" }}</td>
+          <td>{{ client.get_status_display }}</td>
+          <td style="display:flex; gap:8px;">
+            <a href="{% url 'client_edit' client.pk %}" class="btn">Edit</a>
+            <form method="post" action="{% url 'client_delete' client.pk %}" style="display:inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No members in this group.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

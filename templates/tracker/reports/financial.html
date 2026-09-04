@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Financial report{% endblock %}
+{% block content %}
+<h1>Financial Report</h1>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Total member savings</td><td>{{ total_member_savings }}</td></tr>
+  <tr><td>Total group savings</td><td>{{ total_group_savings }}</td></tr>
+  <tr><td>Organization savings</td><td>{{ organization_savings }}</td></tr>
+  <tr><td>Total loan principal</td><td>{{ total_loan_principal }}</td></tr>
+  <tr><td>Outstanding loan balance</td><td>{{ outstanding_loan_balance }}</td></tr>
+</table>
+<p>
+  <a class="btn" href="{% url 'financial_report' %}">Download CSV</a>
+  <a class="btn" href="{% url 'dashboard' %}">Back</a>
+</p>
+{% endblock %}

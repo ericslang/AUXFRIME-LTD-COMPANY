@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Dashboard — Ledger{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Portfolio overview across all groups.</p>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-building-community"></i> Groups</div>
+      <div class="value">{{ group_count }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-users"></i> Members</div>
+      <div class="value">{{ client_count }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-clock"></i> Pending requests</div>
+      <div class="value amber">{{ counts.pending }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-alert-triangle"></i> Not paid / overdue</div>
+      <div class="value rust">{{ counts.overdue }}</div>
+    </div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-wallet"></i> Active loans</div>
+      <div class="value teal">{{ counts.active }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-cash-banknote"></i> Total disbursed</div>
+      <div class="value">KES {{ disbursed|floatformat:0|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-building-bank"></i> Outstanding balance</div>
+      <div class="value rust">KES {{ outstanding|floatformat:0|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-coins"></i> Total savings</div>
+      <div class="value">KES {{ total_savings|floatformat:0|intcomma }}</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      {% if due_soon %}
+        <h3 style="font-size: 16px; margin: 24px 0 10px; display: flex; align-items: center; gap: 8px;">
+          <i class="ti ti-calendar-due" style="color: var(--amber);"></i> Maturing in the next 7 days
+        </h3>
+        <div class="table-wrap" style="margin-bottom: 8px;">
+          <table>
+            <thead>
+              <tr><th>Member</th><th>Group</th><th>Balance</th><th>Maturity date</th><th></th></tr>
+            </thead>
+            <tbody>
+              {% for loan in due_soon %}
+              <tr class="clickable" data-href="{% url 'loan_detail' loan.pk %}" onclick="location.href=this.dataset.href;">
+                <td>{{ loan.client.name }}</td>
+                <td>{{ loan.group.name|default:"—" }}</td>
+                <td class="mono">KES {{ loan.balance|floatformat:0|intcomma }}</td>
+                <td>{{ loan.maturity_date|date:"d M Y" }}</td>
+                <td><span class="stamp stamp-pending"><i class="ti ti-clock"></i> Due soon</span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+        <h3 style="font-size: 16px; margin: 18px 0 10px;">Recent loan activity</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Client</th><th>Group</th><th>Type</th><th>Amount</th><th>Requested</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for loan in recent %}
+              <tr class="clickable" data-href="{% url 'loan_detail' loan.pk %}" onclick="location.href=this.dataset.href;">
+                <td>{{ loan.client.name }}</td>
+                <td>{{ loan.group.name|default:"—" }}</td>
+                <td class="type-badge">
+                  {% if loan.loan_type == 'asset' %}<i class="ti ti-package"></i>{% else %}<i class="ti ti-cash"></i>{% endif %}
+                  {{ loan.get_loan_type_display }}
+                </td>
+                <td class="mono">KES {{ loan.principal|floatformat:0|intcomma }}</td>
+                <td>{{ loan.request_date|date:"d M Y" }}</td>
+                <td><span class="stamp stamp-{{ loan.status }}">{{ loan.status_label }}</span></td>
+              </tr>
+              {% empty %}
+              <tr class="empty-row"><td colspan="6">No loans recorded yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" style="padding:12px 14px; margin:18px 0 0 0;">
+          <div class="section-label">Top member savers</div>
+          <div style="margin-top:8px;">
+            <table>
+              <thead><tr><th>Member</th><th>Group</th><th>Balance</th></tr></thead>
+              <tbody>
+                {% for s in top_member_savers %}
+                <tr>
+                  <td>{{ s.member.name }}</td>
+                  <td>{{ s.member.group.name|default:'—' }}</td>
+                  <td class="mono">KES {{ s.balance|floatformat:0|intcomma }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">No member savings yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <!-- right column can be used for compact cards if needed -->
+      </aside>
+    </div>
+
+  {% endblock %}

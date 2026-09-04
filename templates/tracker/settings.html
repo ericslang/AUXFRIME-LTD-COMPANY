@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h2>Settings</h2>
+      <p class="muted">Manage your profile and account preferences.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3>Profile</h3>
+    <div class="detail-row"><div class="k">Username</div><div class="v">{{ user.username }}</div></div>
+    <div class="detail-row"><div class="k">Full name</div><div class="v">{{ user.get_full_name }}</div></div>
+    <div class="detail-row"><div class="k">Email</div><div class="v">{{ user.email }}</div></div>
+
+    <hr style="margin:16px 0; border:none; border-top:1px solid var(--line);">
+
+    <h3>Account</h3>
+    <p class="muted">Change username or password.</p>
+    <form method="post" action="{% url 'account_settings' %}">
+      {% csrf_token %}
+      <div class="field"><label>Username<br>
+        <input name="username" value="{{ user.username }}">
+      </label></div>
+      <div class="field"><label>Current password<br>
+        <input type="password" name="current_password">
+      </label></div>
+      <div class="field"><label>New password<br>
+        <input type="password" name="new_password1">
+      </label></div>
+      <div class="field"><label>Confirm new password<br>
+        <input type="password" name="new_password2">
+      </label></div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save changes</button>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

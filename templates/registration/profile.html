@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+  <h1>Profile</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label>First name<br>
+        <input type="text" name="first_name" value="{{ user.first_name }}">
+      </label>
+    </div>
+    <div>
+      <label>Last name<br>
+        <input type="text" name="last_name" value="{{ user.last_name }}">
+      </label>
+    </div>
+    <div>
+      <label>Email<br>
+        <input type="email" name="email" value="{{ user.email }}">
+      </label>
+    </div>
+    <p>
+      <button type="submit">Save</button>
+    </p>
+  </form>
+{% endblock %}

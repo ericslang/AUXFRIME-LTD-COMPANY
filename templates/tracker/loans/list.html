@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Loans — Ledger{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h2>Loans</h2>
+      <p>All loan requests and active loans.</p>
+    </div>
+    <div style="margin-left: auto">
+      <a href="{% url 'loan_new' %}" class="btn btn-primary">New loan</a>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Member</th><th>Group</th><th>Type</th><th>Amount</th><th>Requested</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        {% for loan in loans %}
+        <tr class="clickable" data-href="{% url 'loan_detail' loan.pk %}" onclick="location.href=this.dataset.href;">
+          <td>{{ loan.client.name }}</td>
+          <td>{{ loan.group.name|default:"—" }}</td>
+          <td>{% if loan.loan_type == 'asset' %}Asset{% else %}Cash{% endif %}</td>
+          <td class="mono">KES {{ loan.principal|floatformat:0|intcomma }}</td>
+          <td>{{ loan.request_date|date:"d M Y" }}</td>
+          <td><span class="stamp stamp-{{ loan.status }}">{{ loan.status_label }}</span></td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row"><td colspan="6">No loans found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

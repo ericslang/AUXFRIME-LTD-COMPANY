@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{% if group %}Edit group{% else %}New group{% endif %} — Ledger{% endblock %}
+{% block content %}
+  <button class="back-link" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+  <div class="page-head">
+    <div>
+      <h2>{% if group %}Edit group{% else %}New group{% endif %}</h2>
+      <p>Groups organize clients for meetings and lending cycles.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.name.id_for_label }}">Group name</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+      </div>
+      <div class="field">
+        <label for="{{ form.location.id_for_label }}">Location</label>
+        {{ form.location }}
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="{{ form.meeting_day.id_for_label }}">Meeting day</label>
+          {{ form.meeting_day }}
+        </div>
+        <div class="field">
+          <label for="{{ form.officer.id_for_label }}">Loan officer</label>
+          {{ form.officer }}
+        </div>
+      </div>
+      <div class="field">
+        <label for="{{ form.head.id_for_label }}">Group head</label>
+        {{ form.head }}
+        <p class="hint">Select a member to be the group's head (optional).</p>
+      </div>
+      <div class="field">
+        <label for="{{ form.formed_date.id_for_label }}">Date formed</label>
+        {{ form.formed_date }}
+      </div>
+      <div class="form-actions">
+        <a class="btn btn-ghost" href="{% url 'group_list' %}">Cancel</a>
+        <button class="btn btn-primary" type="submit">Save group</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

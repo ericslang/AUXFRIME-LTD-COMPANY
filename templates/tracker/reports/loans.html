@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Loan report{% endblock %}
+{% block content %}
+<h1>Loan Report</h1>
+<table>
+  <tr><th>Client</th><th>Group</th><th>Type</th><th>Principal</th><th>Total paid</th><th>Status</th><th>Balance</th></tr>
+  {% for l in loans %}
+  <tr>
+    <td>{{ l.client.name }}</td>
+    <td>{% if l.group %}{{ l.group.name }}{% else %}{% endif %}</td>
+    <td>{{ l.get_loan_type_display }}</td>
+    <td class="mono">KES {{ l.principal|floatformat:0|intcomma }}</td>
+    <td class="mono">KES {{ l.total_paid|floatformat:0|intcomma }}</td>
+    <td>{{ l.status_label }}</td>
+    <td class="mono">KES {{ l.balance|floatformat:0|intcomma }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No loans</td></tr>
+  {% endfor %}
+</table>
+<p>
+  <a class="btn" href="{% url 'loan_report' %}">Download CSV</a>
+  <a class="btn" href="{% url 'dashboard' %}">Back</a>
+</p>
+{% endblock %}

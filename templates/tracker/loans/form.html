@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}New loan — Ledger{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h2>New loan request</h2>
+      <p>Create a loan request for a client.</p>
+    </div>
+    <div style="margin-left: auto">
+      <a href="{% url 'loan_list' %}" class="btn">Back to loans</a>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div style="margin-top: 12px; display:flex; gap:8px;">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'loan_list' %}" class="btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

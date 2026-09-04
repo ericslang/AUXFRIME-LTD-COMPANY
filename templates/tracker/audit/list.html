@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Audit log</h1>
+<table>
+  <tr><th>Time</th><th>User</th><th>Action</th><th>Model</th><th>Object</th><th>Details</th></tr>
+  {% for l in logs %}
+  <tr>
+    <td>{{ l.timestamp }}</td>
+    <td>{{ l.user }}</td>
+    <td>{{ l.action }}</td>
+    <td>{{ l.model }}</td>
+    <td>{{ l.object_id }}</td>
+    <td>{{ l.details }}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No logs</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

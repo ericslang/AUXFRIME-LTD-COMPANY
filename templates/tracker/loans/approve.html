@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Approve loan {{ loan.pk }} — Ledger{% endblock %}
+{% block content %}
+  <button class="back-link" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+  <div class="page-head">
+    <div>
+      <h2>Approve loan #{{ loan.pk }}</h2>
+      <p>Disburse funds and set maturity date.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button type="submit" class="btn btn-primary">Approve and disburse</button>
+        <a href="{% url 'loan_detail' loan.pk %}" class="btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

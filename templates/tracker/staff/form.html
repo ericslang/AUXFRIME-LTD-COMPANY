@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if staff %}Edit{% else %}New{% endif %} Staff</h1>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <div style="display:flex; gap:8px; margin-top:8px;">
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-ghost" href="{% url 'staff_list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Group savings — {{ group.name }}</h1>
+<p>Balance: {{ account.balance }}</p>
+<h3>Transactions</h3>
+<ul>
+  {% for t in transactions %}
+  <li>{{ t.date }} — {{ t.transaction_type }} — {{ t.amount }} — {{ t.recorded_by }}</li>
+  {% empty %}
+  <li>No transactions</li>
+  {% endfor %}
+</ul>
+{% endblock %}
