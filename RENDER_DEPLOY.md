@@ -1,0 +1,39 @@
+Render deployment and persistent login data
+
+1) Keep a persistent database on Render
+- Use the managed PostgreSQL database defined in render.yaml.
+- Do not delete the Render database service if you want to keep users and app data.
+- Your web service can be redeployed safely; data stays in PostgreSQL.
+
+2) Required environment variables on Render
+- DEBUG=False
+- DJANGO_SECRET_KEY=<long random value>
+- DATABASE_URL=<from the Render PostgreSQL service>
+- ALLOWED_HOSTS=<your Render host and any custom domain>
+- CSRF_TRUSTED_ORIGINS=<https://your Render host and custom domain>
+
+Notes:
+- tracker/settings.py already reads RENDER_EXTERNAL_HOSTNAME and appends it to ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS.
+- In production mode, startup fails intentionally if DATABASE_URL is missing.
+
+3) One-time migration of local users and data (SQLite -> Render PostgreSQL)
+Run these locally from the project root:
+
+  .\venv\Scripts\python.exe manage.py dumpdata --exclude contenttypes --exclude auth.permission --natural-foreign --natural-primary --indent 2 --output render-fixture.json
+
+Commit and push render-fixture.json temporarily, deploy, then open a Render shell and run:
+
+  python manage.py migrate
+  python manage.py loaddata render-fixture.json
+
+After successful import, remove render-fixture.json from the repo and deploy again.
+
+4) Admin access after import
+- If your local admin user existed, its password hash is imported and you can log in with the same credentials.
+- If needed, create/update an admin in Render shell:
+
+  python manage.py ensure_default_admin --username <name> --email <email> --password <password>
+
+5) Backups
+- Keep regular PostgreSQL backups (pg_dump or Render backup features if available on your plan).
+- Store backups outside Render as an extra safety layer.
