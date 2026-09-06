@@ -1,0 +1,339 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$XWZb5mddMMAQL23uU9xFja$fEbkA9eIaAIREuX205QZxue+yOJMnRp2/INFhBfen8g=",
+    "last_login": "2026-09-06T12:29:37.348Z",
+    "is_superuser": true,
+    "username": "steve",
+    "first_name": "",
+    "last_name": "",
+    "email": "steve@auxfrime.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-06T11:06:58.936Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$1hXilmCxHvnzQDpNoS1Hx8$u7JU+CiTPy4ArV4IzgamcBzjsd8eUq1932PuPgIiUVk=",
+    "last_login": "2026-09-06T12:01:27.633Z",
+    "is_superuser": false,
+    "username": "rics",
+    "first_name": "eric",
+    "last_name": "mati",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-06T12:01:01.374Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "d3eww6pvzmzhwvqap3fof5lr9p8iixfk",
+  "fields": {
+    "session_data": ".eJxVjDkOwjAQAP-yNbJ8HynpeYO1Xjs4gGwpTirE31GkFNDOjOYNEfetxn2UNS4ZJhBw-WUJ6VnaIfID270z6m1bl8SOhJ12sFvP5XU9279BxVFhAuuUtEVwTpiTI89lKUFhkF4GIw15g4Sz1oqMVjolPltlnMWAwSYTBHy-z043Qw:1x3AW2:PmeKun0eWZciKyeUdk5CXUBmRal0vRwaU48azkEYgRo",
+    "expire_date": "2026-09-20T10:54:26.487Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "e0lb3ul5dsy46w0sosczb1wk4ei3l6f6",
+  "fields": {
+    "session_data": ".eJxVjMsOgjAQAP9lz6Zp6YMtR-9-Q7PtLhY1kFA4Gf_dkHDQ68xk3pBo32ram6xpYhjAw-WXZSpPmQ_BD5rviyrLvK1TVkeiTtvUbWF5Xc_2b1CpVRhAi7XesFBvckDskDDagGT7XDIZZ5CiaI6FUVwgtuOoXSid8-Sy1QU-X9_jN_0:1x3C09:ru-uEMO5wFYffFynVQJj8dqhs_cpa_SOzk_Mdh1HqXo",
+    "expire_date": "2026-09-20T12:29:37.467Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ue8p6tz7tpjci0keadjn0d1kwzmkrj0e",
+  "fields": {
+    "session_data": ".eJxVjEsOgjAUAO_y1qbpg0Jblu49A-n71KIGEgor490NCQvdzkzmDWPatzLuVddxEhgA4fLLKPFT50PII833xfAyb-tE5kjMaau5LaKv69n-DUqqBQYg63tMSFYceWbbEEbtvFW2mQmx5-ikjR3FmENoG81ZJPWtCmUbnIfPF_DvOI0:1x3AVe:-bvE9m1L4uWldFifZaTlkGr9OBjCT84JW8cOP8bMCIk",
+    "expire_date": "2026-09-20T10:54:02.988Z"
+  }
+},
+{
+  "model": "tracker.group",
+  "pk": 1,
+  "fields": {
+    "name": "Umoja  Group",
+    "group_number": "G-0001",
+    "location": "Kyuso",
+    "meeting_day": "Monday",
+    "officer": "stephen",
+    "head": null,
+    "formed_date": "2026-09-05",
+    "created_at": "2026-09-05T11:40:45.229Z"
+  }
+},
+{
+  "model": "tracker.group",
+  "pk": 2,
+  "fields": {
+    "name": "wema group",
+    "group_number": "G-0002",
+    "location": "Kyuso",
+    "meeting_day": "Tuesday",
+    "officer": "eric",
+    "head": null,
+    "formed_date": "2026-09-06",
+    "created_at": "2026-09-06T09:51:43.934Z"
+  }
+},
+{
+  "model": "tracker.member",
+  "pk": 1,
+  "fields": {
+    "name": "Boniface Kyalo",
+    "group": 1,
+    "member_number": "G-0001-M-001",
+    "phone": "0700000000",
+    "id_number": "41501917",
+    "join_date": "2026-09-05",
+    "status": "active",
+    "created_at": "2026-09-05T11:54:18.491Z"
+  }
+},
+{
+  "model": "tracker.member",
+  "pk": 2,
+  "fields": {
+    "name": "MAKUTHU KISILU",
+    "group": 1,
+    "member_number": "G-0001-M-002",
+    "phone": "0712345678",
+    "id_number": "42356312",
+    "join_date": "2026-09-05",
+    "status": "active",
+    "created_at": "2026-09-05T11:54:56.926Z"
+  }
+},
+{
+  "model": "tracker.member",
+  "pk": 3,
+  "fields": {
+    "name": "zawadi fred",
+    "group": 2,
+    "member_number": "G-0002-M-001",
+    "phone": "0700000000",
+    "id_number": "42356312",
+    "join_date": "2026-09-06",
+    "status": "active",
+    "created_at": "2026-09-06T09:52:26.945Z"
+  }
+},
+{
+  "model": "tracker.loan",
+  "pk": 3,
+  "fields": {
+    "client": 3,
+    "group": 2,
+    "loan_type": "cash",
+    "asset_description": "",
+    "principal": "15000.00",
+    "interest_rate": "1.80",
+    "total_amount_to_be_paid": "16620.00",
+    "duration_months": 6,
+    "request_date": "2026-09-06",
+    "disbursement_date": "2026-09-06",
+    "maturity_date": "2027-03-06",
+    "stage": "active",
+    "requested_by": null,
+    "notes": "",
+    "created_at": "2026-09-06T10:25:23.318Z"
+  }
+},
+{
+  "model": "tracker.payment",
+  "pk": 2,
+  "fields": {
+    "loan": 3,
+    "amount": "2770.00",
+    "date": "2026-09-06",
+    "recorded_by": [
+      "steve"
+    ],
+    "created_at": "2026-09-06T12:50:33.285Z"
+  }
+},
+{
+  "model": "tracker.payment",
+  "pk": 3,
+  "fields": {
+    "loan": 3,
+    "amount": "5000.00",
+    "date": "2026-09-06",
+    "recorded_by": [
+      "steve"
+    ],
+    "created_at": "2026-09-06T12:51:43.923Z"
+  }
+},
+{
+  "model": "tracker.payment",
+  "pk": 4,
+  "fields": {
+    "loan": 3,
+    "amount": "8850.00",
+    "date": "2026-09-06",
+    "recorded_by": [
+      "steve"
+    ],
+    "created_at": "2026-09-06T12:52:28.604Z"
+  }
+},
+{
+  "model": "tracker.staff",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "rics"
+    ],
+    "role": "secretary",
+    "phone": "0715838585",
+    "created_at": "2026-09-06T12:01:02.501Z",
+    "assigned_groups": []
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 1,
+  "fields": {
+    "user": null,
+    "action": "staff_saved",
+    "model": "Staff",
+    "object_id": "1",
+    "details": "steve (Loan Officer)",
+    "timestamp": "2026-09-05T12:05:40.823Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 2,
+  "fields": {
+    "user": null,
+    "action": "saving_deposit",
+    "model": "SavingTransaction",
+    "object_id": "1",
+    "details": "Applied 50000 to member",
+    "timestamp": "2026-09-05T12:09:10.725Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 3,
+  "fields": {
+    "user": null,
+    "action": "staff_saved",
+    "model": "Staff",
+    "object_id": "2",
+    "details": "eric muneeni (Employee)",
+    "timestamp": "2026-09-06T10:40:37.098Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 4,
+  "fields": {
+    "user": null,
+    "action": "staff_saved",
+    "model": "Staff",
+    "object_id": "3",
+    "details": "Z Z (Employee)",
+    "timestamp": "2026-09-06T10:54:27.831Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 5,
+  "fields": {
+    "user": null,
+    "action": "staff_deleted",
+    "model": "Staff",
+    "object_id": "2",
+    "details": "eric muneeni (Employee)",
+    "timestamp": "2026-09-06T11:04:09.319Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "steve"
+    ],
+    "action": "staff_saved",
+    "model": "Staff",
+    "object_id": "4",
+    "details": "eric mati (Secretary)",
+    "timestamp": "2026-09-06T12:01:02.653Z"
+  }
+},
+{
+  "model": "tracker.auditlog",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "steve"
+    ],
+    "action": "saving_deposit",
+    "model": "SavingTransaction",
+    "object_id": "2",
+    "details": "Applied 100000 to member",
+    "timestamp": "2026-09-06T12:44:14.489Z"
+  }
+},
+{
+  "model": "tracker.membersaving",
+  "pk": 1,
+  "fields": {
+    "member": 2,
+    "balance": "50000.00",
+    "updated_at": "2026-09-05T12:09:10.665Z"
+  }
+},
+{
+  "model": "tracker.membersaving",
+  "pk": 2,
+  "fields": {
+    "member": 1,
+    "balance": "100000.00",
+    "updated_at": "2026-09-06T12:44:14.430Z"
+  }
+},
+{
+  "model": "tracker.savingtransaction",
+  "pk": 1,
+  "fields": {
+    "member": 2,
+    "group": 1,
+    "amount": "50000.00",
+    "transaction_type": "deposit",
+    "date": "2026-09-05",
+    "recorded_by": null,
+    "notes": "",
+    "created_at": "2026-09-05T12:09:10.384Z"
+  }
+},
+{
+  "model": "tracker.savingtransaction",
+  "pk": 2,
+  "fields": {
+    "member": 1,
+    "group": 1,
+    "amount": "100000.00",
+    "transaction_type": "deposit",
+    "date": "2026-09-06",
+    "recorded_by": [
+      "steve"
+    ],
+    "notes": "",
+    "created_at": "2026-09-06T12:44:14.264Z"
+  }
+}
+]
