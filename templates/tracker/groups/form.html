@@ -18,6 +18,11 @@
         {{ form.name.errors }}
       </div>
       <div class="field">
+        <label for="{{ form.group_number.id_for_label }}">Group number</label>
+        {{ form.group_number }}
+        <p class="hint">Auto-generated and unique for each group.</p>
+      </div>
+      <div class="field">
         <label for="{{ form.location.id_for_label }}">Location</label>
         {{ form.location }}
       </div>

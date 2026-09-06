@@ -5,25 +5,30 @@
   <div class="page-head">
     <div>
       <h2>{{ group.name }}</h2>
-      <p>{{ group.location }} — {{ group.meeting_day }}</p>
+      <p><strong>Group no.:</strong> {{ group.group_number|default:"—" }} &middot; {{ group.location }} — {{ group.meeting_day }}</p>
       {% if group.head %}
         <p><strong>Group head:</strong> {{ group.head.name }} {% if group.head.phone %}— {{ group.head.phone }}{% endif %} {% if group.head.id_number %}<br>National ID: {{ group.head.id_number }}{% endif %}</p>
       {% endif %}
     </div>
-    <div style="margin-left: auto">
+    <div style="margin-left: auto; display:flex; gap:8px; align-items:center;">
       <a href="{% url 'group_add_member' group.pk %}" class="btn">Add member</a>
       <a href="{% url 'group_edit' group.pk %}" class="btn">Edit group</a>
+      <form method="post" action="{% url 'group_delete' group.pk %}" onsubmit="return confirm('Delete this group?');" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete group</button>
+      </form>
     </div>
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Name</th><th>Phone</th><th>National ID</th><th>Joined</th><th>Status</th><th></th></tr>
+        <tr><th>Member no.</th><th>Name</th><th>Phone</th><th>National ID</th><th>Joined</th><th>Status</th><th></th></tr>
       </thead>
       <tbody>
         {% for client in clients %}
         <tr>
+          <td>{{ client.member_number|default:"—" }}</td>
           <td>{{ client.name }}</td>
           <td>{{ client.phone|default:"—" }}</td>
           <td>{{ client.id_number|default:"—" }}</td>

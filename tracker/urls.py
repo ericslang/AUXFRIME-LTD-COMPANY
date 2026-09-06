@@ -36,6 +36,7 @@ urlpatterns = [
     path("staff/", views.staff_list, name="staff_list"),
     path("staff/new/", views.staff_form, name="staff_new"),
     path("staff/<int:pk>/edit/", views.staff_form, name="staff_edit"),
+    path("staff/<int:pk>/delete/", views.staff_delete, name="staff_delete"),
     path("staff/<int:pk>/", views.staff_detail, name="staff_detail"),
     path("staff/<int:pk>/tasks/new/", views.staff_task_new, name="staff_task_new"),
     path("audit/", views.audit_list, name="audit_list"),
@@ -44,8 +45,10 @@ urlpatterns = [
     path("savings/group/<int:group_id>/", views.group_savings, name="group_savings"),
     path("reports/financial/", views.financial_report, name="financial_report"),
     path("reports/loans/", views.loan_report, name="loan_report"),
+    path("reports/installments/", views.installment_report, name="installment_report"),
     path("reports/financial/view/", views.financial_report_view, name="financial_report_view"),
     path("reports/loans/view/", views.loan_report_view, name="loan_report_view"),
+    path("reports/installments/view/", views.installment_report_view, name="installment_report_view"),
     # Authentication (login/logout/password management)
     path("accounts/", include("django.contrib.auth.urls")),
 ]

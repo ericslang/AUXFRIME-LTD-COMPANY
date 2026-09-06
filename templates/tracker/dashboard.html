@@ -46,6 +46,26 @@
     </div>
   </div>
 
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-chart-pie"></i> Total profit collected</div>
+      <div class="value">KES {{ total_profit|floatformat:0|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-coin"></i> Loan principal</div>
+      <div class="value">KES {{ disbursed|floatformat:0|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-alert-octagon"></i> Missed instalments</div>
+      <div class="value rust">{{ missed_installment_count }}</div>
+      <div style="margin-top: 6px; font-size: 12px; color: var(--muted);">KES {{ missed_installment_total|floatformat:0|intcomma }} due</div>
+    </div>
+    <div class="stat-card">
+      <div class="label"><i class="ti ti-checklist"></i> Paid loans</div>
+      <div class="value teal">{{ counts.paid }}</div>
+    </div>
+  </div>
+
   <div class="two-col">
     <div>
       {% if due_soon %}

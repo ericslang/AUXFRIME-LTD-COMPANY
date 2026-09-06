@@ -27,12 +27,20 @@ def dashboard(request):
     counts = {"pending": 0, "active": 0, "overdue": 0, "paid": 0}
     outstanding = Decimal("0")
     disbursed = Decimal("0")
+    total_profit = Decimal("0")
+    monthly_installment_total = Decimal("0")
+    missed_installment_total = Decimal("0")
+    missed_installment_count = 0
     for loan in loans:
         counts[loan.status] += 1
         if loan.status != "pending":
             disbursed += loan.principal
+            total_profit += loan.profit_collected
         if loan.status in ("active", "overdue"):
             outstanding += loan.balance
+            monthly_installment_total += loan.monthly_installment
+            missed_installment_count += loan.missed_installments
+            missed_installment_total += loan.monthly_installment * Decimal(loan.missed_installments)
 
     recent = loans[:6]
 
@@ -49,6 +57,10 @@ def dashboard(request):
         "counts": counts,
         "outstanding": outstanding,
         "disbursed": disbursed,
+        "total_profit": total_profit,
+        "monthly_installment_total": monthly_installment_total,
+        "missed_installment_total": missed_installment_total,
+        "missed_installment_count": missed_installment_count,
         "recent": recent,
         "due_soon": due_soon,
     }
@@ -151,8 +163,16 @@ def settings(request):
 # ---------------------------------------------------------------- Groups
 @login_required
 def group_list(request):
-    groups = Group.objects.all()
-    return render(request, "tracker/groups/list.html", {"groups": groups})
+    q = request.GET.get("q", "").strip()
+    groups = Group.objects.select_related("head").all()
+    if q:
+        groups = groups.filter(
+            Q(name__icontains=q)
+            | Q(group_number__icontains=q)
+            | Q(location__icontains=q)
+            | Q(head__name__icontains=q)
+        )
+    return render(request, "tracker/groups/list.html", {"groups": groups, "q": q})
 
 
 @login_required
@@ -181,11 +201,14 @@ def group_delete(request, pk):
     group = get_object_or_404(Group, pk=pk)
     if request.method == "POST":
         try:
+            group_name = str(group)
             group.delete()
+            AuditLog.objects.create(user=request.user, action="group_deleted", model="Group", object_id=str(pk), details=group_name)
             messages.success(request, "Group deleted.")
         except ProtectedError:
             messages.error(request, "This group still has clients assigned. Reassign or remove them first.")
-    return redirect("group_list")
+        return redirect("group_list")
+    return render(request, "tracker/groups/delete.html", {"group": group})
 
 
 @login_required
@@ -208,7 +231,13 @@ def client_list(request):
     q = request.GET.get("q", "").strip()
     clients = Member.objects.select_related("group").all()
     if q:
-        clients = clients.filter(Q(name__icontains=q) | Q(phone__icontains=q) | Q(id_number__icontains=q))
+        clients = clients.filter(
+            Q(name__icontains=q)
+            | Q(member_number__icontains=q)
+            | Q(phone__icontains=q)
+            | Q(id_number__icontains=q)
+            | Q(group__group_number__icontains=q)
+        )
     return render(request, "tracker/clients/list.html", {"clients": clients, "q": q})
 
 
@@ -231,7 +260,9 @@ def client_delete(request, pk):
     client = get_object_or_404(Member, pk=pk)
     if request.method == "POST":
         try:
+            client_name = str(client)
             client.delete()
+            AuditLog.objects.create(user=request.user, action="member_deleted", model="Member", object_id=str(pk), details=client_name)
             messages.success(request, "Member deleted.")
         except ProtectedError:
             messages.error(request, "This member has loan records. Loans must stay linked to their client.")
@@ -294,6 +325,13 @@ def loan_payment(request, pk):
             payment.loan = loan
             payment.recorded_by = request.user
             payment.save()
+            AuditLog.objects.create(
+                user=request.user,
+                action="loan_payment_recorded",
+                model="Payment",
+                object_id=str(payment.pk),
+                details=f"{payment.amount} paid for {loan.client.name} ({loan.pk})",
+            )
             messages.success(request, "Payment recorded.")
             return redirect("loan_detail", pk=loan.pk)
     else:
@@ -332,7 +370,9 @@ def loan_export_csv(request):
 def loan_delete(request, pk):
     loan = get_object_or_404(Loan, pk=pk)
     if request.method == "POST":
+        loan_label = str(loan)
         loan.delete()
+        AuditLog.objects.create(user=request.user, action="loan_deleted", model="Loan", object_id=str(pk), details=loan_label)
         messages.success(request, "Loan record deleted.")
         return redirect("loan_list")
     return render(request, "tracker/loans/delete.html", {"loan": loan})
@@ -365,6 +405,24 @@ def staff_detail(request, pk):
     staff = get_object_or_404(Staff.objects.select_related('user'), pk=pk)
     tasks = staff.tasks.all()
     return render(request, "tracker/staff/detail.html", {"staff": staff, "tasks": tasks})
+
+
+@login_required
+def staff_delete(request, pk):
+    staff = Staff.objects.select_related("user").filter(pk=pk).first()
+    if staff is None:
+        messages.warning(request, "This staff member no longer exists.")
+        return redirect("staff_list")
+
+    if request.method == "POST":
+        user = staff.user
+        staff_name = str(staff)
+        staff.delete()
+        if user and user.pk:
+            user.delete()
+        AuditLog.objects.create(user=request.user, action="staff_deleted", model="Staff", object_id=str(pk), details=staff_name)
+        messages.success(request, "Staff deleted.")
+    return redirect("staff_list")
 
 
 @login_required
@@ -462,6 +520,34 @@ def loan_report(request):
 
 
 @login_required
+def installment_report(request):
+    loans = Loan.objects.select_related("client", "group").prefetch_related("payments").all()
+    response = HttpResponse(content_type="text/csv")
+    filename = f"missed-installments-{datetime.date.today().isoformat()}.csv"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        "Member number", "Member", "Group",
+        "Monthly installment", "Missed installments", "Amount due",
+    ])
+    for loan in loans:
+        missed = loan.missed_installments
+        if missed <= 0:
+            continue
+        amount_due = loan.monthly_installment * Decimal(missed)
+        writer.writerow([
+            loan.client.member_number or "",
+            loan.client.name,
+            loan.group.name if loan.group else "",
+            loan.monthly_installment,
+            missed,
+            amount_due,
+        ])
+    return response
+
+
+@login_required
 def financial_report_view(request):
     # Render a human-readable page showing financial metrics with download option
     total_member_savings = MemberSaving.objects.aggregate(total=Sum("balance"))["total"] or Decimal("0")
@@ -488,3 +574,23 @@ def loan_report_view(request):
     # Render a human-readable loan report with option to download CSV
     loans = Loan.objects.select_related("client", "group").prefetch_related("payments").all()
     return render(request, "tracker/reports/loans.html", {"loans": loans})
+
+
+@login_required
+def installment_report_view(request):
+    loans = Loan.objects.select_related("client", "group").prefetch_related("payments").all()
+    rows = []
+    for loan in loans:
+        missed = loan.missed_installments
+        if missed <= 0:
+            continue
+        rows.append({
+            "member_number": loan.client.member_number,
+            "member": loan.client.name,
+            "group": loan.group.name if loan.group else "—",
+            "monthly_installment": loan.monthly_installment,
+            "missed_installments": missed,
+            "amount_due": loan.monthly_installment * Decimal(missed),
+        })
+    rows.sort(key=lambda r: (-r["missed_installments"], r["member"]))
+    return render(request, "tracker/reports/installments.html", {"rows": rows})

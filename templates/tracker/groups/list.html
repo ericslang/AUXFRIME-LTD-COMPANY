@@ -11,14 +11,20 @@
     </div>
   </div>
 
+  <form method="get" class="search-box">
+    <i class="ti ti-search"></i>
+    <input type="text" name="q" value="{{ q }}" placeholder="Search groups or group number…" onchange="this.form.submit()">
+  </form>
+
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Name</th><th>Location</th><th>Meeting day</th><th>Head</th><th>Members</th><th></th></tr>
+        <tr><th>Group no.</th><th>Name</th><th>Location</th><th>Meeting day</th><th>Head</th><th>Members</th><th></th></tr>
       </thead>
       <tbody>
         {% for group in groups %}
-        <tr class="clickable" data-href="{% url 'group_edit' group.pk %}" onclick="location.href=this.dataset.href;">
+        <tr>
+          <td>{{ group.group_number|default:"—" }}</td>
           <td>{{ group.name }}</td>
           <td>{{ group.location|default:"—" }}</td>
           <td>{{ group.meeting_day }}</td>
@@ -27,7 +33,10 @@
           <td style="display:flex; gap:8px;">
             <a href="{% url 'group_detail' group.pk %}" class="btn">View members</a>
             <a href="{% url 'group_add_member' group.pk %}" class="btn">Add member</a>
-            <a href="{% url 'group_delete' group.pk %}" class="btn btn-danger">Delete</a>
+            <form method="post" action="{% url 'group_delete' group.pk %}" onsubmit="return confirm('Delete this group?');" style="display:inline;" onclick="event.stopPropagation();">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
           </td>
         </tr>
         {% empty %}

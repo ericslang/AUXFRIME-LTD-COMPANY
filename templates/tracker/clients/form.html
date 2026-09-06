@@ -17,6 +17,11 @@
         {{ form.name }}
         {{ form.name.errors }}
       </div>
+      <div class="field">
+        <label for="{{ form.member_number.id_for_label }}">Member number</label>
+        {{ form.member_number }}
+        <p class="hint">Auto-generated per group.</p>
+      </div>
       {% if group %}
       <div class="field">
         <label>Group</label>

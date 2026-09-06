@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Delete group — Ledger{% endblock %}
+{% block content %}
+  <button class="back-link" onclick="history.back()"><i class="ti ti-arrow-left"></i> Back</button>
+  <div class="page-head">
+    <div>
+      <h2>Delete group</h2>
+      <p>Are you sure you want to remove <strong>{{ group.name }}</strong>?</p>
+    </div>
+  </div>
+
+  <div class="card" style="max-width: 520px; padding: 20px;">
+    <p><strong>Group no.:</strong> {{ group.group_number|default:"—" }}</p>
+    <p><strong>Location:</strong> {{ group.location|default:"—" }}</p>
+    <p><strong>Members:</strong> {{ group.member_count }}</p>
+
+    <form method="post" action="{% url 'group_delete' group.pk %}">
+      {% csrf_token %}
+      <div style="display:flex; gap:10px; margin-top: 12px;">
+        <button type="submit" class="btn btn-danger">Delete group</button>
+        <a href="{% url 'group_list' %}" class="btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

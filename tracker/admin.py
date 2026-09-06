@@ -6,15 +6,15 @@ from .models import StaffTask
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ("name", "location", "meeting_day", "officer", "member_count")
-    search_fields = ("name", "location")
+    list_display = ("group_number", "name", "location", "meeting_day", "officer", "member_count")
+    search_fields = ("group_number", "name", "location")
 
 
 @admin.register(Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ("name", "group", "phone", "status", "join_date")
+    list_display = ("member_number", "name", "group", "phone", "status", "join_date")
     list_filter = ("group", "status")
-    search_fields = ("name", "phone", "id_number")
+    search_fields = ("member_number", "name", "phone", "id_number")
 
 
 class PaymentInline(admin.TabularInline):

@@ -15,6 +15,7 @@ MEETING_DAYS = [
 
 class Group(models.Model):
     name = models.CharField(max_length=150)
+    group_number = models.CharField(max_length=20, unique=True, blank=True)
     location = models.CharField(max_length=150, blank=True)
     meeting_day = models.CharField(max_length=10, choices=MEETING_DAYS, default="Monday")
     officer = models.CharField("Loan officer", max_length=120, blank=True)
@@ -26,10 +27,22 @@ class Group(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.group_number or 'No number'})"
 
     def get_absolute_url(self):
         return reverse("group_list")
+
+    def save(self, *args, **kwargs):
+        if not self.group_number:
+            used_numbers = set(Group.objects.exclude(pk=self.pk).values_list("group_number", flat=True))
+            index = 1
+            while True:
+                candidate = f"G-{index:04d}"
+                if candidate not in used_numbers:
+                    self.group_number = candidate
+                    break
+                index += 1
+        super().save(*args, **kwargs)
 
     @property
     def member_count(self):
@@ -41,6 +54,7 @@ class Member(models.Model):
 
     name = models.CharField(max_length=150)
     group = models.ForeignKey(Group, on_delete=models.PROTECT, related_name="members", null=True, blank=True)
+    member_number = models.CharField(max_length=30, blank=True)
     phone = models.CharField(max_length=30, blank=True)
     id_number = models.CharField("National ID number", max_length=40, blank=True)
     join_date = models.DateField(default=datetime.date.today)
@@ -49,24 +63,46 @@ class Member(models.Model):
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(fields=["group", "member_number"], name="unique_member_number_per_group")
+        ]
 
     def __str__(self):
+        if self.group and self.member_number:
+            return f"{self.name} ({self.member_number})"
         return self.name
 
     def get_absolute_url(self):
         return reverse("client_list")
 
+    def save(self, *args, **kwargs):
+        if self.group_id and not self.member_number:
+            prefix = self.group.group_number or "G-0001"
+            used_numbers = set(
+                Member.objects.filter(group=self.group).exclude(pk=self.pk).values_list("member_number", flat=True)
+            )
+            index = 1
+            while True:
+                candidate = f"{prefix}-M-{index:03d}"
+                if candidate not in used_numbers:
+                    self.member_number = candidate
+                    break
+                index += 1
+        super().save(*args, **kwargs)
+
 
 class Loan(models.Model):
     TYPE_CHOICES = [("cash", "Cash"), ("asset", "Asset")]
     STAGE_CHOICES = [("requested", "Requested"), ("active", "Active")]
+    FIXED_INTEREST_RATE = Decimal("1.80")
 
     client = models.ForeignKey(Member, on_delete=models.PROTECT, related_name="loans")
     group = models.ForeignKey(Group, on_delete=models.PROTECT, related_name="loans", null=True, blank=True)
     loan_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="cash")
     asset_description = models.CharField(max_length=200, blank=True)
     principal = models.DecimalField(max_digits=12, decimal_places=2)
-    interest_rate = models.DecimalField("Interest rate (% flat, over full term)", max_digits=5, decimal_places=2, default=Decimal("10.00"))
+    interest_rate = models.DecimalField("Interest rate (% per month)", max_digits=5, decimal_places=2, default=FIXED_INTEREST_RATE)
+    total_amount_to_be_paid = models.DecimalField("Total amount to be paid", max_digits=12, decimal_places=2, default=Decimal("0.00"))
     duration_months = models.PositiveIntegerField(default=6)
 
     request_date = models.DateField(default=datetime.date.today)
@@ -87,6 +123,10 @@ class Loan(models.Model):
     def save(self, *args, **kwargs):
         if self.client_id and not self.group_id:
             self.group = self.client.group
+        self.interest_rate = self.FIXED_INTEREST_RATE
+        months = self.duration_months or 1
+        total_interest = (self.principal or Decimal("0")) * (self.interest_rate / Decimal("100")) * Decimal(months)
+        self.total_amount_to_be_paid = (self.principal or Decimal("0")) + total_interest
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -94,11 +134,50 @@ class Loan(models.Model):
 
     @property
     def total_due(self):
-        return (self.principal or Decimal("0")) * (Decimal("1") + (self.interest_rate or Decimal("0")) / Decimal("100"))
+        months = self.duration_months or 1
+        total_interest = (self.principal or Decimal("0")) * ((self.interest_rate or Decimal("0")) / Decimal("100")) * Decimal(months)
+        return self.total_amount_to_be_paid or ((self.principal or Decimal("0")) + total_interest)
+
+    @property
+    def total_amount(self):
+        return self.total_amount_to_be_paid
+
+    @property
+    def monthly_installment(self):
+        if not self.duration_months:
+            return self.total_amount_to_be_paid or Decimal("0")
+        return (self.total_amount_to_be_paid or Decimal("0")) / Decimal(self.duration_months)
+
+    @property
+    def installments_paid(self):
+        if not self.monthly_installment:
+            return 0
+        return int((self.total_paid / self.monthly_installment).to_integral_value()) if self.total_paid else 0
+
+    @property
+    def current_monthly_due_count(self):
+        start_date = self.disbursement_date or self.request_date
+        today = datetime.date.today()
+        if today < start_date:
+            return 0
+        months_elapsed = (today.year - start_date.year) * 12 + (today.month - start_date.month)
+        if today.day < start_date.day:
+            months_elapsed -= 1
+        if self.duration_months <= 0:
+            return 0
+        return min(self.duration_months, max(0, months_elapsed))
+
+    @property
+    def missed_installments(self):
+        return max(0, self.current_monthly_due_count - self.installments_paid)
 
     @property
     def total_paid(self):
         return sum((p.amount for p in self.payments.all()), Decimal("0"))
+
+    @property
+    def profit_collected(self):
+        return self.total_amount_to_be_paid - (self.principal or Decimal("0"))
 
     @property
     def balance(self):

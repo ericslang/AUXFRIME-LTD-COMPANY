@@ -3,7 +3,14 @@
 <h1>Staff: {{ staff.user.get_full_name|default:staff.user.username }}</h1>
 <p>Role: {{ staff.get_role_display }}</p>
 <p>Phone: {{ staff.phone }}</p>
-<p><a href="{% url 'staff_edit' staff.pk %}">Edit</a> | <a href="{% url 'staff_task_new' staff.pk %}">Assign task</a></p>
+<p>
+  <a href="{% url 'staff_edit' staff.pk %}">Edit</a> |
+  <a href="{% url 'staff_task_new' staff.pk %}">Assign task</a> |
+  <form method="post" action="{% url 'staff_delete' staff.pk %}" onsubmit="return confirm('Delete this staff member?');" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger" style="padding: 4px 10px;">Delete</button>
+  </form>
+</p>
 
 <h3 style="margin-top:18px;">Assigned tasks</h3>
 <div class="table-wrap">

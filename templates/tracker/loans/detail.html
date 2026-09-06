@@ -20,15 +20,27 @@
 
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="label">Amount</div>
+      <div class="label">Principal amount</div>
       <div class="value">KES {{ loan.principal|floatformat:2|intcomma }}</div>
     </div>
     <div class="stat-card">
-      <div class="label">Interest rate</div>
-      <div class="value">{{ loan.interest_rate }}%</div>
+      <div class="label">Total to be paid</div>
+      <div class="value">KES {{ loan.total_amount_to_be_paid|floatformat:2|intcomma }}</div>
     </div>
     <div class="stat-card">
-      <div class="label">Duration</div>
+      <div class="label">Interest rate</div>
+      <div class="value">{{ loan.interest_rate }}% per month</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Monthly installment</div>
+      <div class="value">KES {{ loan.monthly_installment|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Profit collected</div>
+      <div class="value">KES {{ loan.profit_collected|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Period</div>
       <div class="value">{{ loan.duration_months }} months</div>
     </div>
     <div class="stat-card">

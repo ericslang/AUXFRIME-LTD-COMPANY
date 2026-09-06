@@ -11,17 +11,18 @@
 
   <form method="get" class="search-box">
     <i class="ti ti-search"></i>
-    <input type="text" name="q" value="{{ q }}" placeholder="Search members…" onchange="this.form.submit()">
+    <input type="text" name="q" value="{{ q }}" placeholder="Search members or member no.…" onchange="this.form.submit()">
   </form>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>Name</th><th>Group</th><th>Phone</th><th>ID number</th><th>Joined</th><th>Status</th><th></th></tr>
+        <tr><th>Member no.</th><th>Name</th><th>Group</th><th>Phone</th><th>ID number</th><th>Joined</th><th>Status</th><th></th></tr>
       </thead>
       <tbody>
         {% for client in clients %}
         <tr>
+          <td>{{ client.member_number|default:"—" }}</td>
           <td style="font-weight: 500;">{{ client.name }}</td>
           <td>{{ client.group.name|default:"—" }}</td>
           <td>{{ client.phone|default:"—" }}</td>

@@ -45,6 +45,7 @@
           <div class="nav-sub" id="reports-sub">
             <a class="nav-link sub {% if request.resolver_match.url_name == 'financial_report_view' or request.resolver_match.url_name == 'financial_report' %}active{% endif %}" href="{% url 'financial_report_view' %}">Financial</a>
             <a class="nav-link sub {% if request.resolver_match.url_name == 'loan_report_view' or request.resolver_match.url_name == 'loan_report' %}active{% endif %}" href="{% url 'loan_report_view' %}">Loans</a>
+            <a class="nav-link sub {% if request.resolver_match.url_name == 'installment_report_view' or request.resolver_match.url_name == 'installment_report' %}active{% endif %}" href="{% url 'installment_report_view' %}">Missed installments</a>
           </div>
         </div>
         <a class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'settings' %}">
@@ -88,7 +89,7 @@
       if(!parent || !toggle) return;
       // Auto-open if on a report page
       const name = "{{ request.resolver_match.url_name|default:'' }}";
-      if(name === 'financial_report_view' || name === 'loan_report_view' || name === 'financial_report' || name === 'loan_report'){
+      if(name === 'financial_report_view' || name === 'loan_report_view' || name === 'installment_report_view' || name === 'financial_report' || name === 'loan_report' || name === 'installment_report'){
         parent.classList.add('open');
       }
       toggle.addEventListener('click', function(){

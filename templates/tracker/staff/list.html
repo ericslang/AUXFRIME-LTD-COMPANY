@@ -11,7 +11,14 @@
         <td>{{ s.get_role_display }}</td>
         <td>{{ s.phone|default:'—' }}</td>
         <td>{{ s.assigned_groups.count }}</td>
-        <td><a href="{% url 'staff_edit' s.pk %}">Edit</a> | <a href="{% url 'staff_detail' s.pk %}">View</a></td>
+        <td>
+          <a href="{% url 'staff_edit' s.pk %}">Edit</a> |
+          <a href="{% url 'staff_detail' s.pk %}">View</a> |
+          <form method="post" action="{% url 'staff_delete' s.pk %}" onsubmit="return confirm('Delete this staff member?');" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" style="padding: 4px 10px;">Delete</button>
+          </form>
+        </td>
       </tr>
       {% empty %}
       <tr class="empty-row"><td colspan="5">No staff found.</td></tr>

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Missed installments report{% endblock %}
+{% block content %}
+  <div class="page-head">
+    <div>
+      <h2>Missed installments report</h2>
+      <p>Monthly repayment status for every member loan.</p>
+    </div>
+    <div style="margin-left: auto; display:flex; gap:8px;">
+      <a class="btn" href="{% url 'installment_report' %}">Download CSV</a>
+      <a class="btn" href="{% url 'dashboard' %}">Back</a>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Member no.</th>
+          <th>Member</th>
+          <th>Group</th>
+          <th>Monthly installment</th>
+          <th>Missed</th>
+          <th>Amount due</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.member_number|default:'—' }}</td>
+            <td>{{ row.member }}</td>
+            <td>{{ row.group }}</td>
+            <td class="mono">KES {{ row.monthly_installment|floatformat:2|intcomma }}</td>
+            <td>{{ row.missed_installments }}</td>
+            <td class="mono">KES {{ row.amount_due|floatformat:2|intcomma }}</td>
+          </tr>
+        {% empty %}
+          <tr class="empty-row"><td colspan="6">No missed installments found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
