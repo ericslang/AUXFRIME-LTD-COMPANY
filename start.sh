@@ -5,13 +5,14 @@ python manage.py collectstatic --no-input
 python manage.py migrate
 
 if [ "${IMPORT_FIXTURE_ON_START:-false}" = "true" ]; then
-  if [ -f "render-fixture.json" ]; then
+  fixture_file="${IMPORT_FIXTURE_FILE:-render-users.json}"
+  if [ -f "${fixture_file}" ]; then
     existing_users="$(python manage.py shell -c "from django.contrib.auth import get_user_model; print(get_user_model().objects.count())")"
     if [ "${FORCE_FIXTURE_IMPORT:-false}" != "true" ] && [ "${existing_users}" -gt 0 ]; then
       echo "Skipping fixture import: ${existing_users} user(s) already exist. Set FORCE_FIXTURE_IMPORT=true to override."
     else
-      echo "IMPORT_FIXTURE_ON_START=true; loading render-fixture.json"
-      if python manage.py loaddata render-fixture.json; then
+      echo "IMPORT_FIXTURE_ON_START=true; loading ${fixture_file}"
+      if python manage.py loaddata "${fixture_file}"; then
         echo "Fixture import completed successfully."
       else
         if [ "${IMPORT_FIXTURE_FAIL_HARD:-false}" = "true" ]; then
@@ -22,7 +23,7 @@ if [ "${IMPORT_FIXTURE_ON_START:-false}" = "true" ]; then
       fi
     fi
   else
-    echo "IMPORT_FIXTURE_ON_START=true but render-fixture.json not found"
+    echo "IMPORT_FIXTURE_ON_START=true but ${fixture_file} was not found"
   fi
 fi
 

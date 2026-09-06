@@ -1,0 +1,36 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$XWZb5mddMMAQL23uU9xFja$fEbkA9eIaAIREuX205QZxue+yOJMnRp2/INFhBfen8g=",
+    "last_login": "2026-09-06T12:29:37.348Z",
+    "is_superuser": true,
+    "username": "steve",
+    "first_name": "",
+    "last_name": "",
+    "email": "steve@auxfrime.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-09-06T11:06:58.936Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$1hXilmCxHvnzQDpNoS1Hx8$u7JU+CiTPy4ArV4IzgamcBzjsd8eUq1932PuPgIiUVk=",
+    "last_login": "2026-09-06T12:01:27.633Z",
+    "is_superuser": false,
+    "username": "rics",
+    "first_name": "eric",
+    "last_name": "mati",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-09-06T12:01:01.374Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

@@ -20,29 +20,31 @@ Notes:
 - tracker/settings.py already reads RENDER_EXTERNAL_HOSTNAME and appends it to ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS.
 - In production mode, startup fails intentionally if DATABASE_URL is missing.
 
-3) One-time migration of local users and data (SQLite -> Render PostgreSQL)
-Run these locally from the project root:
+3) One-time migration of login credentials (SQLite -> Render PostgreSQL)
+Run this locally from the project root:
 
-  .\venv\Scripts\python.exe manage.py dumpdata --exclude contenttypes --exclude auth.permission --natural-foreign --natural-primary --indent 2 --output render-fixture.json
+  .\venv\Scripts\python.exe manage.py dumpdata auth.user --natural-primary --indent 2 --output render-users.json
 
-Commit and push render-fixture.json temporarily.
+Commit and push render-users.json temporarily.
 
 If Render Shell is unavailable on your plan, use env-driven startup import:
 - Set IMPORT_FIXTURE_ON_START=true in Render environment.
 - Deploy once. The app startup will run migrate and then loaddata automatically.
 - Set IMPORT_FIXTURE_ON_START=false after successful login verification.
+- Default fixture filename is render-users.json.
+- You can override with IMPORT_FIXTURE_FILE=<filename>.
 - If users already exist, import is skipped by default to avoid conflicts.
 - Set FORCE_FIXTURE_IMPORT=true only when you intentionally want to re-import.
 - Set IMPORT_FIXTURE_FAIL_HARD=true if you want deploy to fail whenever import fails.
 
 If your Render dashboard still uses build.sh directly, use build-time import instead:
 - Set IMPORT_FIXTURE_ON_BUILD=true in Render environment.
-- Deploy once and check build logs for "loading render-fixture.json".
+- Deploy once and check build logs for "loading render-users.json".
 - Set IMPORT_FIXTURE_ON_BUILD=false after successful login verification.
 
 If Render Shell is available, you can still run:
   python manage.py migrate
-  python manage.py loaddata render-fixture.json
+  python manage.py loaddata render-users.json
 
 After successful import, remove render-fixture.json from the repo and deploy again.
 
