@@ -25,8 +25,14 @@ Run these locally from the project root:
 
   .\venv\Scripts\python.exe manage.py dumpdata --exclude contenttypes --exclude auth.permission --natural-foreign --natural-primary --indent 2 --output render-fixture.json
 
-Commit and push render-fixture.json temporarily, deploy, then open a Render shell and run:
+Commit and push render-fixture.json temporarily.
 
+If Render Shell is unavailable on your plan, use env-driven startup import:
+- Set IMPORT_FIXTURE_ON_START=true in Render environment.
+- Deploy once. The app startup will run migrate and then loaddata automatically.
+- Set IMPORT_FIXTURE_ON_START=false after successful login verification.
+
+If Render Shell is available, you can still run:
   python manage.py migrate
   python manage.py loaddata render-fixture.json
 

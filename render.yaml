@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: python manage.py collectstatic --no-input && python manage.py migrate && gunicorn tracker.wsgi:application
+    startCommand: bash start.sh
     envVars:
       - key: DEBUG
         value: "False"
@@ -18,6 +18,8 @@ services:
         sync: false
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
+      - key: IMPORT_FIXTURE_ON_START
+        value: "false"
 
 databases:
   - name: loan-tracker-db
