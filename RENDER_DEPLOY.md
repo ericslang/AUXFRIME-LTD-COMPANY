@@ -35,6 +35,11 @@ If Render Shell is unavailable on your plan, use env-driven startup import:
 - Set FORCE_FIXTURE_IMPORT=true only when you intentionally want to re-import.
 - Set IMPORT_FIXTURE_FAIL_HARD=true if you want deploy to fail whenever import fails.
 
+If your Render dashboard still uses build.sh directly, use build-time import instead:
+- Set IMPORT_FIXTURE_ON_BUILD=true in Render environment.
+- Deploy once and check build logs for "loading render-fixture.json".
+- Set IMPORT_FIXTURE_ON_BUILD=false after successful login verification.
+
 If Render Shell is available, you can still run:
   python manage.py migrate
   python manage.py loaddata render-fixture.json
