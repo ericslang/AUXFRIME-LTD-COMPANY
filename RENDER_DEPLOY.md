@@ -31,6 +31,9 @@ If Render Shell is unavailable on your plan, use env-driven startup import:
 - Set IMPORT_FIXTURE_ON_START=true in Render environment.
 - Deploy once. The app startup will run migrate and then loaddata automatically.
 - Set IMPORT_FIXTURE_ON_START=false after successful login verification.
+- If users already exist, import is skipped by default to avoid conflicts.
+- Set FORCE_FIXTURE_IMPORT=true only when you intentionally want to re-import.
+- Set IMPORT_FIXTURE_FAIL_HARD=true if you want deploy to fail whenever import fails.
 
 If Render Shell is available, you can still run:
   python manage.py migrate
