@@ -3,8 +3,8 @@ services:
     name: loan-tracker
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt && bash build.sh
-    startCommand: gunicorn tracker.wsgi:application
+    buildCommand: pip install -r requirements.txt
+    startCommand: python manage.py collectstatic --no-input && python manage.py migrate && gunicorn tracker.wsgi:application
     envVars:
       - key: DEBUG
         value: "False"

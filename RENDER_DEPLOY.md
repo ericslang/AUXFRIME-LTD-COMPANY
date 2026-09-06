@@ -5,6 +5,10 @@ Render deployment and persistent login data
 - Do not delete the Render database service if you want to keep users and app data.
 - Your web service can be redeployed safely; data stays in PostgreSQL.
 
+Build/runtime note:
+- render.yaml now uses a build command that only installs dependencies.
+- Django commands (collectstatic, migrate) run in startCommand where DATABASE_URL is available.
+
 2) Required environment variables on Render
 - DEBUG=False
 - DJANGO_SECRET_KEY=<long random value>
